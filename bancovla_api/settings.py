@@ -52,7 +52,7 @@ STATIC_URL = "static/"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "BancoVLA API",
-    "DESCRIPTION": "API de usuarios y autenticación del Banco VLA - Despliegue Automatico",
+    "DESCRIPTION": "API de usuarios y autenticación del Banco VLA - Despliegue Automatico de Adolfo",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,   
     "APPEND_COMPONENTS": {
