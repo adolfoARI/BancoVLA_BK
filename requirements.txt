@@ -9,4 +9,4 @@ pydantic
 pytest
 drf-spectacular
 drf-pydantic
-pytest
+gunicorn
