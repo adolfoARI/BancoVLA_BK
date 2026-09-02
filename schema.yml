@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: BancoVLA API
+  version: 1.0.0
+  description: API de usuarios y autenticación del Banco VLA
+paths:
+  /usuarios/CreateNewUser:
+    post:
+      operationId: usuarios_CreateNewUser_create
+      description: Registra un usuario nuevo. La contraseña se guarda hasheada con
+        bcrypt.
+      summary: Crear un usuario
+      tags:
+      - Usuarios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+  /usuarios/GetAllUsers:
+    post:
+      operationId: usuarios_GetAllUsers_create
+      description: Requiere un access token válido en el header Authorization.
+      summary: Listar todos los usuarios
+      tags:
+      - Usuarios
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+  /usuarios/login:
+    post:
+      operationId: usuarios_login_create
+      description: Valida credenciales y devuelve un access token y un refresh token.
+      summary: Iniciar sesión
+      tags:
+      - Autenticación
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+  /usuarios/refresh:
+    post:
+      operationId: usuarios_refresh_create
+      description: Recibe el refresh token en el header Authorization y emite un access
+        token nuevo.
+      summary: Renovar el access token
+      tags:
+      - Autenticación
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+components:
+  schemas:
+    GetAllUsersModel:
+      type: object
+      properties:
+        idUser:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+      required:
+      - active
+      - idUser
+      - name
+      - username
+    LoginModel:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    MessageResponse:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          default: 0
+        mensaje:
+          type: string
+          default: Transaccion exitosa
+    TokenModel:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          default: bearer
+      required:
+      - access_token
+      - refresh_token
+    TokenResponse:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          default: 0
+        mensaje:
+          type: string
+          default: Transaccion exitosa
+        data:
+          allOf:
+          - $ref: '#/components/schemas/TokenModel'
+          nullable: true
+    UserCreateModel:
+      type: object
+      properties:
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        active:
+          type: boolean
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - active
+      - birthdate
+      - name
+      - password
+      - username
+    UserResponse:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          default: 0
+        mensaje:
+          type: string
+          default: Transaccion exitosa
+        data:
+          allOf:
+          - $ref: '#/components/schemas/UsersPayLoad'
+          nullable: true
+    UsersPayLoad:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetAllUsersModel'
+      required:
+      - totalUsers
+      - users
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
