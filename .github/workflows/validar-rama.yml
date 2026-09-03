@@ -1,0 +1,22 @@
+name: Validar nombre de rama
+
+on:
+  pull_request:
+    branches: [develop]
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar prefijo feature/
+        env:
+          RAMA: ${{ github.head_ref }}
+        run: |
+          echo "Rama origen: $RAMA"
+          if [[ ! "$RAMA" =~ ^feature/[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]; then
+            echo "::error::'$RAMA' no cumple el formato requerido."
+            echo "Usa: feature/nombre-de-la-funcion (minusculas y guiones)"
+            exit 1
+          fi
+          echo "Nombre valido."
+
