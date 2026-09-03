@@ -10,3 +10,4 @@ pytest
 drf-spectacular
 drf-pydantic
 gunicorn
+pytest-django
